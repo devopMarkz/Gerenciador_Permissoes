@@ -1,0 +1,7 @@
+spring:
+  application:
+    name: gerenciador-permissoes
+  jpa:
+    open-in-view: false
+  profiles:
+    active: dev
