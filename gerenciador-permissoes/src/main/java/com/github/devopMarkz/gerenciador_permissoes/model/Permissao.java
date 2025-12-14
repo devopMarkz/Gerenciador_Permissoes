@@ -3,6 +3,8 @@ package com.github.devopMarkz.gerenciador_permissoes.model;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.Set;
+
 @Entity
 @Table(name = "tb_permissao")
 @AllArgsConstructor
@@ -29,5 +31,17 @@ public class Permissao {
     @Column(name = "link", nullable = false, unique = true)
     @EqualsAndHashCode.Include
     private String link;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "modulo_id", nullable = false)
+    private Modulo modulo;
+
+    // Relacionamento Many-to-Many com Perfil (via tb_perfil_permissao)
+    @OneToMany(mappedBy = "permissao", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<PerfilPermissao> perfis;
+
+    // Relacionamento Many-to-Many com Empresa (via tb_empresa_permissoes)
+    @OneToMany(mappedBy = "permissao", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<EmpresaPermissao> empresasPermissoes;
 
 }

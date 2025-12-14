@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 
 @Entity
 @Table(name = "tb_empresa_permissoes")
@@ -33,5 +33,5 @@ public class EmpresaPermissao {
 
     @CreationTimestamp
     @Column(name = "criado_em", insertable = false, updatable = false)
-    private LocalDateTime criadoEm;
+    private Instant criadoEm;
 }

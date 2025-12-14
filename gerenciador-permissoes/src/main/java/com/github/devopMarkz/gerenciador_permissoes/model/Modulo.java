@@ -1,10 +1,7 @@
 package com.github.devopMarkz.gerenciador_permissoes.model;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -12,21 +9,27 @@ import java.time.Instant;
 import java.util.Set;
 
 @Entity
-@Table(name = "tb_perfil")
-@Data
+@Table(name = "tb_modulo")
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
-public class Perfil {
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
+public class Modulo {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @EqualsAndHashCode.Include
     private Long id;
 
     @Column(nullable = false, unique = true)
     private String nome;
 
-    private String descricao;
+    @Column(name = "icone")
+    private String icone;
+
+    @Column(columnDefinition = "integer default 0")
+    private Integer ordem;
 
     @CreationTimestamp
     @Column(name = "criado_em", columnDefinition = "TIMESTAMPTZ DEFAULT now()")
@@ -36,11 +39,11 @@ public class Perfil {
     @Column(name = "atualizado_em", columnDefinition = "TIMESTAMPTZ DEFAULT now()")
     private Instant atualizadoEm;
 
-    // Relacionamento Many-to-Many com Permissao (via tb_perfil_permissao)
-    @OneToMany(mappedBy = "perfil", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<PerfilPermissao> permissoes;
+    // Relacionamento One-to-Many com Permissao
+    @OneToMany(mappedBy = "modulo", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<Permissao> permissoes;
 
-    // Relacionamento Many-to-Many com Empresa (via tb_empresa_perfis)
-    @OneToMany(mappedBy = "perfil", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<EmpresaPerfil> empresasPerfis;
+    // Relacionamento Many-to-Many com Empresa (via tb_empresa_modulos)
+    @OneToMany(mappedBy = "modulo", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<EmpresaModulo> empresasModulos;
 }

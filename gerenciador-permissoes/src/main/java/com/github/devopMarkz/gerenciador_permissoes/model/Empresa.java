@@ -3,15 +3,17 @@ package com.github.devopMarkz.gerenciador_permissoes.model;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
+import java.util.Set;
 
 @Entity
 @Table(name = "tb_empresa")
-@AllArgsConstructor
-@NoArgsConstructor
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class Empresa {
 
@@ -20,28 +22,42 @@ public class Empresa {
     @EqualsAndHashCode.Include
     private Long id;
 
-    @Column(name = "nome", nullable = false)
+    @Column(nullable = false)
     private String nome;
 
     @Column(name = "razao_social")
     private String razaoSocial;
 
-    @Column(name = "cnpj", nullable = false, unique = true)
-    @EqualsAndHashCode.Include
+    @Column(nullable = false, unique = true)
     private String cnpj;
 
-    @Column(name = "ativa", nullable = false)
+    @Column(columnDefinition = "boolean default true")
     private Boolean ativa = Boolean.TRUE;
 
     @Column(name = "observacoes")
     private String observacoes;
 
     @CreationTimestamp
-    @Column(name = "criado_em", insertable = false, updatable = false)
-    private LocalDateTime criadoEm;
+    @Column(name = "criado_em", columnDefinition = "TIMESTAMPTZ DEFAULT now()")
+    private Instant criadoEm;
 
-    @CreationTimestamp
-    @Column(name = "atualizado_em ", insertable = false)
-    private LocalDateTime atualizadoEm;
+    @UpdateTimestamp
+    @Column(name = "atualizado_em", columnDefinition = "TIMESTAMPTZ DEFAULT now()")
+    private Instant atualizadoEm;
 
+    // Relacionamento One-to-Many com Usuario
+    @OneToMany(mappedBy = "empresa", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<Usuario> usuarios;
+
+    // Relacionamento Many-to-Many com Perfil (via tb_empresa_perfis)
+    @OneToMany(mappedBy = "empresa", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<EmpresaPerfil> perfis;
+
+    // Relacionamento Many-to-Many com Modulo (via tb_empresa_modulos)
+    @OneToMany(mappedBy = "empresa", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<EmpresaModulo> modulos;
+
+    // Relacionamento Many-to-Many com Permissao (via tb_empresa_permissoes)
+    @OneToMany(mappedBy = "empresa", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<EmpresaPermissao> permissoes;
 }
