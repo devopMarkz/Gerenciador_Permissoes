@@ -19,7 +19,7 @@ CREATE TABLE tb_modulo (
 
 CREATE TABLE tb_perfil (
   id BIGSERIAL PRIMARY KEY,
-  nome TEXT NOT NULL UNIQUE,         -- ex: "FINANCEIRO_BASICO"
+  nome TEXT NOT NULL UNIQUE,        -- ex: "FINANCEIRO_BASICO"
   descricao TEXT,
   criado_em TIMESTAMPTZ DEFAULT now(),
   atualizado_em TIMESTAMPTZ DEFAULT now()
@@ -33,13 +33,13 @@ CREATE TABLE tb_perfil (
 
 CREATE TABLE tb_permissao (
   id BIGSERIAL PRIMARY KEY,
-  chave TEXT NOT NULL UNIQUE,        -- ex: "FINANCEIRO_LISTAR_CONTAS"
+  chave TEXT NOT NULL UNIQUE,       -- ex: "FINANCEIRO_LISTAR_CONTAS"
   nome TEXT NOT NULL,
   descricao TEXT,
-  link TEXT,                         -- rota do front-end (opcional)
+  link TEXT,                        -- rota do front-end (opcional)
 
   -- cada permissão pertence a 1 módulo
-  modulo_id BIGINT REFERENCES tb_modulo(id) ON DELETE SET NULL,
+  modulo_id BIGINT NOT NULL REFERENCES tb_modulo(id),
 
   criado_em TIMESTAMPTZ DEFAULT now(),
   atualizado_em TIMESTAMPTZ DEFAULT now()
@@ -118,13 +118,13 @@ CREATE INDEX idx_empresa_modulos_modulo_id ON tb_empresa_modulos(modulo_id);
 
 
 -- =====================================================================
--- 8) Overrides de PERMISSÕES por empresa (permitir/negar granularmente)
+-- 8) Overrides de PERMISSÕES por empresa (permitir/negar)
 -- =====================================================================
 
 CREATE TABLE tb_empresa_permissoes (
   empresa_id BIGINT NOT NULL REFERENCES tb_empresa(id) ON DELETE CASCADE,
   permissao_id BIGINT NOT NULL REFERENCES tb_permissao(id) ON DELETE CASCADE,
-  permitido BOOLEAN NOT NULL,        -- true = permitir; false = negar
+  permitido BOOLEAN NOT NULL,       -- true = permitir | false = negar
   criado_em TIMESTAMPTZ DEFAULT now(),
   PRIMARY KEY (empresa_id, permissao_id)
 );
@@ -145,10 +145,10 @@ CREATE TABLE tb_usuario (
   senha TEXT NOT NULL,
 
   -- ROLE do Spring Security
-  -- Pode ser: ROLE_ADMIN ou ROLE_EMPRESA
-  role VARCHAR(50) NOT NULL,
+  role VARCHAR(50) NOT NULL
+    CHECK (role IN ('ROLE_ADMIN', 'ROLE_EMPRESA')),
 
-  -- FK opcional: se ROLE_EMPRESA, deve ser preenchida
+  -- se ROLE_EMPRESA, deve apontar para uma empresa
   empresa_id BIGINT REFERENCES tb_empresa(id) ON DELETE SET NULL,
 
   ativo BOOLEAN DEFAULT true,
@@ -158,25 +158,3 @@ CREATE TABLE tb_usuario (
 
 CREATE INDEX idx_usuario_role ON tb_usuario(role);
 CREATE INDEX idx_usuario_empresa_id ON tb_usuario(empresa_id);
-
-
-
--- =====================================================================
--- 10) Trigger de validação para ROLE_EMPRESA
--- =====================================================================
-
-CREATE OR REPLACE FUNCTION trg_usuario_valida_empresa()
-RETURNS trigger AS $$
-BEGIN
-    -- se o usuário é ROLE_EMPRESA, empresa_id é obrigatório
-    IF (NEW.role = 'ROLE_EMPRESA' AND NEW.empresa_id IS NULL) THEN
-        RAISE EXCEPTION 'Usuário com ROLE_EMPRESA deve possuir empresa_id.';
-    END IF;
-
-    RETURN NEW;
-END;
-$$ LANGUAGE plpgsql;
-
-CREATE TRIGGER tg_usuario_empresa
-BEFORE INSERT OR UPDATE ON tb_usuario
-FOR EACH ROW EXECUTE PROCEDURE trg_usuario_valida_empresa();
