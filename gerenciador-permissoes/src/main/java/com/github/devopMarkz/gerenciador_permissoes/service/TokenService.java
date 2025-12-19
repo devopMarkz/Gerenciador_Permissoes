@@ -49,7 +49,7 @@ public class TokenService {
 
         String login = decodedJWT.getSubject();
 
-        return usuarioRepository.findUsuarioByEmail(token)
+        return usuarioRepository.findUsuarioByEmail(login)
                 .orElseThrow(() -> new UsernameNotFoundException("Usuário inexistente."));
     }
 
