@@ -1,6 +1,7 @@
 package com.github.devopMarkz.gerenciador_permissoes.controller;
 
 import com.github.devopMarkz.gerenciador_permissoes.dto.PerfilCreateDTO;
+import com.github.devopMarkz.gerenciador_permissoes.dto.PermissaoCreateDTO;
 import com.github.devopMarkz.gerenciador_permissoes.service.PerfilService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
@@ -29,4 +30,10 @@ public class PerfilController {
         return ResponseEntity.created(gerarURI(id)).build();
     }
 
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PostMapping("/{id}/permissoes")
+    public ResponseEntity<Void> criarPermissao(@RequestBody @Valid PermissaoCreateDTO dto){
+        Long id = perfilService.criarPerfil(dto);
+        return ResponseEntity.created(gerarURI(id)).build();
+    }
 }
