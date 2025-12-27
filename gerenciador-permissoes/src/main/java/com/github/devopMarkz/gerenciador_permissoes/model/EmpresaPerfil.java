@@ -39,4 +39,8 @@ public class EmpresaPerfil {
     @Column(name = "observacao")
     private String observacao;
 
+    public EmpresaPerfil(Empresa empresa, Perfil perfil) {
+        this.empresa = empresa;
+        this.perfil = perfil;
+    }
 }

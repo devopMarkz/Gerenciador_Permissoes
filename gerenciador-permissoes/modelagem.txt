@@ -5,6 +5,7 @@
 CREATE TABLE tb_modulo (
   id BIGSERIAL PRIMARY KEY,
   nome TEXT NOT NULL UNIQUE,        -- ex: "FINANCEIRO"
+  descricao TEXT,
   icone TEXT,                       -- opcional
   ordem INTEGER DEFAULT 0,          -- ordenação no menu
   criado_em TIMESTAMPTZ DEFAULT now(),

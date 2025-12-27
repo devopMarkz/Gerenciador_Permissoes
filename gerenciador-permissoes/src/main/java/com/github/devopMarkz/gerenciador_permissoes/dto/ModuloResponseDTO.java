@@ -1,7 +1,8 @@
 package com.github.devopMarkz.gerenciador_permissoes.dto;
 
-public record PerfilResponseDTO(
+public record ModuloResponseDTO(
         Long id,
         String nome,
-        String descricao
+        String descricao,
+        String icone
 ) {}

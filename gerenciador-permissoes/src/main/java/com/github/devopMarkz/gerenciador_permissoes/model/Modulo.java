@@ -28,6 +28,9 @@ public class Modulo {
     @Column(name = "icone")
     private String icone;
 
+    @Column(name = "descricao")
+    private String descricao;
+
     @Column(columnDefinition = "integer default 0")
     private Integer ordem;
 

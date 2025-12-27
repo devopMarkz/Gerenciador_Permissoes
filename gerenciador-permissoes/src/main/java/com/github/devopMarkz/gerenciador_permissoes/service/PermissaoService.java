@@ -1,17 +1,11 @@
 package com.github.devopMarkz.gerenciador_permissoes.service;
 
-import com.github.devopMarkz.gerenciador_permissoes.dto.PermissaoCreateDTO;
 import com.github.devopMarkz.gerenciador_permissoes.mapper.PermissaoMapper;
-import com.github.devopMarkz.gerenciador_permissoes.model.Modulo;
-import com.github.devopMarkz.gerenciador_permissoes.model.Perfil;
-import com.github.devopMarkz.gerenciador_permissoes.model.PerfilPermissao;
-import com.github.devopMarkz.gerenciador_permissoes.model.Permissao;
 import com.github.devopMarkz.gerenciador_permissoes.repository.ModuloRepository;
 import com.github.devopMarkz.gerenciador_permissoes.repository.PerfilPermissaoRepository;
 import com.github.devopMarkz.gerenciador_permissoes.repository.PerfilRepository;
 import com.github.devopMarkz.gerenciador_permissoes.repository.PermissaoRepository;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class PermissaoService {

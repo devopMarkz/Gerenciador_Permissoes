@@ -1,6 +1,8 @@
 package com.github.devopMarkz.gerenciador_permissoes.service;
 
 import com.github.devopMarkz.gerenciador_permissoes.dto.PerfilCreateDTO;
+import com.github.devopMarkz.gerenciador_permissoes.dto.PerfilDetalheDTO;
+import com.github.devopMarkz.gerenciador_permissoes.dto.PerfilResponseDTO;
 import com.github.devopMarkz.gerenciador_permissoes.mapper.PerfilMapper;
 import com.github.devopMarkz.gerenciador_permissoes.model.Perfil;
 import com.github.devopMarkz.gerenciador_permissoes.model.PerfilPermissao;
@@ -11,7 +13,9 @@ import com.github.devopMarkz.gerenciador_permissoes.repository.PermissaoReposito
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 public class PerfilService {
@@ -43,6 +47,7 @@ public class PerfilService {
                 .orElseThrow(() -> new IllegalArgumentException("Perfil inexistente."));
 
         perfilPermissaoRepository.deleteAllByPerfilId(perfilId);
+        perfil.getPermissoes().clear();
 
         Set<Permissao> permissoes = permissaoRepository.findByIdIn(permissoesId);
 
@@ -52,5 +57,36 @@ public class PerfilService {
 
         perfilRepository.save(perfil);
     }
+
+    @Transactional(readOnly = true)
+    public List<PerfilResponseDTO> listar() {
+        return perfilRepository.findAll()
+                .stream()
+                .map(p -> new PerfilResponseDTO(
+                        p.getId(),
+                        p.getNome(),
+                        p.getDescricao()
+                ))
+                .toList();
+    }
+
+    @Transactional(readOnly = true)
+    public PerfilDetalheDTO buscarPorId(Long id) {
+        Perfil perfil = perfilRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Perfil inexistente."));
+
+        Set<String> permissoes = perfil.getPermissoes()
+                .stream()
+                .map(pp -> pp.getPermissao().getChave())
+                .collect(Collectors.toSet());
+
+        return new PerfilDetalheDTO(
+                perfil.getId(),
+                perfil.getNome(),
+                perfil.getDescricao(),
+                permissoes
+        );
+    }
+
 
 }
