@@ -9,17 +9,17 @@ import com.github.devopMarkz.gerenciador_permissoes.model.Modulo;
 import com.github.devopMarkz.gerenciador_permissoes.repository.EmpresaModuloRepository;
 import com.github.devopMarkz.gerenciador_permissoes.repository.EmpresaRepository;
 import com.github.devopMarkz.gerenciador_permissoes.repository.ModuloRepository;
+import com.github.devopMarkz.gerenciador_permissoes.util.BaseService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
 import java.util.Set;
 
 @Service
-public class EmpresaService {
+public class EmpresaService extends BaseService {
 
     private final EmpresaRepository empresaRepository;
     private final EmpresaMapper empresaMapper;
@@ -54,13 +54,20 @@ public class EmpresaService {
 
         empresaModuloRepository.deleteAllByEmpresaId(empresaId);
 
-        Set<Modulo> modulos = moduloRepository.buscarModulosPorIds(modulosIds);
+        Set<Modulo> modulos = moduloRepository.findByIdIn(modulosIds);
 
         for (Modulo modulo : modulos){
             empresa.getModulos().add(new EmpresaModulo(empresa, modulo));
         }
 
         empresaRepository.save(empresa);
+    }
+
+    public void associarEmpresaAPerfis(Long empresaId, Set<Long> perfisIds){
+        Empresa empresa = empresaRepository.findById(empresaId)
+                .orElseThrow(() -> new IllegalArgumentException("Empresa inexistente."));
+
+
     }
 
 }

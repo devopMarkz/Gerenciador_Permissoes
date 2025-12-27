@@ -38,13 +38,13 @@ public class PerfilService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public void associarPerfilAPermissoes(Long perfilId, Set<Integer> permissoesId){
+    public void associarPerfilAPermissoes(Long perfilId, Set<Long> permissoesId){
         Perfil perfil = perfilRepository.findById(perfilId)
                 .orElseThrow(() -> new IllegalArgumentException("Perfil inexistente."));
 
         perfilPermissaoRepository.deleteAllByPerfilId(perfilId);
 
-        Set<Permissao> permissoes = permissaoRepository.buscarPermissoesPorId(permissoesId);
+        Set<Permissao> permissoes = permissaoRepository.findByIdIn(permissoesId);
 
         for (Permissao permissao : permissoes) {
             perfil.getPermissoes().add(new PerfilPermissao(perfil, permissao));
