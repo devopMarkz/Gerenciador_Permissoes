@@ -30,7 +30,7 @@ public class EmpresaPerfil {
     private Perfil perfil;
 
     @Column(name = "ativo", nullable = false)
-    private Boolean ativo;
+    private Boolean ativo = Boolean.TRUE;
 
     @CreationTimestamp
     @Column(name = "atribuido_em", updatable = false)

@@ -30,4 +30,9 @@ public class EmpresaModulo implements Serializable {
 
     @Column(columnDefinition = "boolean default true")
     private Boolean ativo = Boolean.TRUE;
+
+    public EmpresaModulo(Empresa empresa, Modulo modulo) {
+        this.empresa = empresa;
+        this.modulo = modulo;
+    }
 }

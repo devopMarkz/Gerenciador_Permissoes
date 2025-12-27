@@ -25,4 +25,8 @@ public class PerfilPermissao {
     @JoinColumn(name = "permissao_id", nullable = false)
     private Permissao permissao;
 
+    public PerfilPermissao(Perfil perfil, Permissao permissao) {
+        this.perfil = perfil;
+        this.permissao = permissao;
+    }
 }

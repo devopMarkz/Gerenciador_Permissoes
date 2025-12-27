@@ -2,6 +2,7 @@ package com.github.devopMarkz.gerenciador_permissoes.service;
 
 import com.github.devopMarkz.gerenciador_permissoes.dto.PermissaoCreateDTO;
 import com.github.devopMarkz.gerenciador_permissoes.mapper.PermissaoMapper;
+import com.github.devopMarkz.gerenciador_permissoes.model.Modulo;
 import com.github.devopMarkz.gerenciador_permissoes.model.Perfil;
 import com.github.devopMarkz.gerenciador_permissoes.model.PerfilPermissao;
 import com.github.devopMarkz.gerenciador_permissoes.model.Permissao;
@@ -29,27 +30,6 @@ public class PermissaoService {
         this.moduloRepository = moduloRepository;
     }
 
-    @Transactional
-    public Long criarPermissao(PermissaoCreateDTO dto, Long moduloId, Long perfilId){
-        if(!moduloRepository.existsById(moduloId)) {
-            throw new IllegalArgumentException("Módulo inexistente.");
-        }
 
-        if(!perfilRepository.existsById(perfilId)){
-            throw new IllegalArgumentException("Perfil inexistente.");
-        }
-
-        Permissao permissao = permissaoMapper.toEntity(dto);
-        permissaoRepository.saveAndFlush(permissao);
-
-        Perfil perfil = perfilRepository.getReferenceById(perfilId);
-
-        PerfilPermissao perfilPermissao = new PerfilPermissao();
-        perfilPermissao.setPermissao(permissao);
-        perfilPermissao.setPerfil(perfil);
-        perfilPermissaoRepository.saveAndFlush(perfilPermissao);
-
-        return null;
-    }
 
 }

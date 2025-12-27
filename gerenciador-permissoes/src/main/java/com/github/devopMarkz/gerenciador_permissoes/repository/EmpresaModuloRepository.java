@@ -1,7 +1,7 @@
 package com.github.devopMarkz.gerenciador_permissoes.repository;
 
-import com.github.devopMarkz.gerenciador_permissoes.model.PerfilPermissao;
-import com.github.devopMarkz.gerenciador_permissoes.model.PerfilPermissaoPK;
+import com.github.devopMarkz.gerenciador_permissoes.model.EmpresaModulo;
+import com.github.devopMarkz.gerenciador_permissoes.model.EmpresaModuloPK;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -10,11 +10,11 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 @Repository
-public interface PerfilPermissaoRepository extends JpaRepository<PerfilPermissao, PerfilPermissaoPK> {
+public interface EmpresaModuloRepository extends JpaRepository<EmpresaModulo, EmpresaModuloPK> {
 
     @Transactional
     @Modifying
-    @Query(value = "DELETE FROM tb_perfil_permissao WHERE perfil_id = :perfilId", nativeQuery = true)
-    void deleteAllByPerfilId(@Param("perfilId") Long perfilId);
+    @Query(value = "DELETE FROM tb_empresa_modulos WHERE empresa_id = :empresaId", nativeQuery = true)
+    void deleteAllByEmpresaId(@Param("empresaId") Long empresaId);
 
 }
