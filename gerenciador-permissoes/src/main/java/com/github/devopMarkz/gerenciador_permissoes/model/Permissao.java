@@ -3,6 +3,7 @@ package com.github.devopMarkz.gerenciador_permissoes.model;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
@@ -38,10 +39,10 @@ public class Permissao {
 
     // Relacionamento Many-to-Many com Perfil (via tb_perfil_permissao)
     @OneToMany(mappedBy = "permissao", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<PerfilPermissao> perfis;
+    private Set<PerfilPermissao> perfis = new HashSet<>();
 
     // Relacionamento Many-to-Many com Empresa (via tb_empresa_permissoes)
     @OneToMany(mappedBy = "permissao", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<EmpresaPermissao> empresasPermissoes;
+    private Set<EmpresaPermissao> empresasPermissoes = new HashSet<>();
 
 }

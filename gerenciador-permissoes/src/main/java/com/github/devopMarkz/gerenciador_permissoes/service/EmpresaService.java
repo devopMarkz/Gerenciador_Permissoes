@@ -46,7 +46,7 @@ public class EmpresaService extends BaseService {
     @Transactional(readOnly = true)
     public Page<EmpresaResponseDTO> empresaResponseDTOS(int pageNumber, int pageSize){
         Pageable pageable = gerarPaginacao(pageNumber, pageSize, null);
-        Page<Empresa> empresas = empresaRepository.buscarEmpresas(pageable);
+        Page<Empresa> empresas = empresaRepository.findAll(pageable);
         return empresas.map(empresaMapper::toResponseDTO);
     }
 

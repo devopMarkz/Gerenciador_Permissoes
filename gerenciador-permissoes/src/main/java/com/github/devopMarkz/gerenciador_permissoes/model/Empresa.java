@@ -6,6 +6,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.Instant;
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
@@ -47,17 +48,17 @@ public class Empresa {
 
     // Relacionamento One-to-Many com Usuario
     @OneToMany(mappedBy = "empresa", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<Usuario> usuarios;
+    private Set<Usuario> usuarios = new HashSet<>();
 
     // Relacionamento Many-to-Many com Perfil (via tb_empresa_perfis)
     @OneToMany(mappedBy = "empresa", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<EmpresaPerfil> perfis;
+    private Set<EmpresaPerfil> perfis = new HashSet<>();
 
     // Relacionamento Many-to-Many com Modulo (via tb_empresa_modulos)
     @OneToMany(mappedBy = "empresa", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<EmpresaModulo> modulos;
+    private Set<EmpresaModulo> modulos = new HashSet<>();
 
     // Relacionamento Many-to-Many com Permissao (via tb_empresa_permissoes)
     @OneToMany(mappedBy = "empresa", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<EmpresaPermissao> permissoes;
+    private Set<EmpresaPermissao> permissoes = new HashSet<>();
 }

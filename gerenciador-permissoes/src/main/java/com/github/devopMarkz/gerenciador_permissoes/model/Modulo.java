@@ -6,6 +6,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.Instant;
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
@@ -44,9 +45,9 @@ public class Modulo {
 
     // Relacionamento One-to-Many com Permissao
     @OneToMany(mappedBy = "modulo", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<Permissao> permissoes;
+    private Set<Permissao> permissoes = new HashSet<>();
 
     // Relacionamento Many-to-Many com Empresa (via tb_empresa_modulos)
     @OneToMany(mappedBy = "modulo", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<EmpresaModulo> empresasModulos;
+    private Set<EmpresaModulo> empresasModulos = new HashSet<>();
 }

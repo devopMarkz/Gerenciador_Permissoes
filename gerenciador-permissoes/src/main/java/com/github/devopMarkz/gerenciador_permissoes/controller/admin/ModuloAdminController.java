@@ -13,6 +13,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Set;
 
 import static com.github.devopMarkz.gerenciador_permissoes.util.GeradorUri.gerarURI;
 
@@ -65,4 +66,25 @@ public class ModuloAdminController {
         moduloService.atribuirPermissaoAModulo(id, dto);
         return ResponseEntity.status(201).build();
     }
+
+    @GetMapping("/{id}/permissoes")
+    public ResponseEntity<Set<String>> listarPermissoes(@PathVariable Long id) {
+        return ResponseEntity.ok(moduloService.listarPermissoes(id));
+    }
+
+    @DeleteMapping("/{moduloId}/permissoes/{permissaoId}")
+    public ResponseEntity<Void> removerPermissao(
+            @PathVariable Long moduloId,
+            @PathVariable Long permissaoId
+    ) {
+        moduloService.removerPermissaoDoModulo(moduloId, permissaoId);
+        return ResponseEntity.noContent().build();
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> excluirModulo(@PathVariable Long id) {
+        moduloService.excluir(id);
+        return ResponseEntity.noContent().build();
+    }
+
 }

@@ -17,4 +17,6 @@ public interface EmpresaModuloRepository extends JpaRepository<EmpresaModulo, Em
     @Query(value = "DELETE FROM tb_empresa_modulos WHERE empresa_id = :empresaId", nativeQuery = true)
     void deleteAllByEmpresaId(@Param("empresaId") Long empresaId);
 
+    boolean existsByModuloId(Long moduloId);
+
 }

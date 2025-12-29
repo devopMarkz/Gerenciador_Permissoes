@@ -8,6 +8,7 @@ import com.github.devopMarkz.gerenciador_permissoes.mapper.ModuloMapper;
 import com.github.devopMarkz.gerenciador_permissoes.mapper.PermissaoMapper;
 import com.github.devopMarkz.gerenciador_permissoes.model.Modulo;
 import com.github.devopMarkz.gerenciador_permissoes.model.Permissao;
+import com.github.devopMarkz.gerenciador_permissoes.repository.EmpresaModuloRepository;
 import com.github.devopMarkz.gerenciador_permissoes.repository.ModuloRepository;
 import com.github.devopMarkz.gerenciador_permissoes.repository.PermissaoRepository;
 import org.springframework.stereotype.Service;
@@ -27,12 +28,14 @@ public class ModuloService {
     private final ModuloMapper moduloMapper;
     private final PermissaoMapper permissaoMapper;
     private final PermissaoRepository permissaoRepository;
+    private final EmpresaModuloRepository empresaModuloRepository;
 
-    public ModuloService(ModuloRepository moduloRepository, ModuloMapper moduloMapper, PermissaoMapper permissaoMapper, PermissaoRepository permissaoRepository) {
+    public ModuloService(ModuloRepository moduloRepository, ModuloMapper moduloMapper, PermissaoMapper permissaoMapper, PermissaoRepository permissaoRepository, EmpresaModuloRepository empresaModuloRepository) {
         this.moduloRepository = moduloRepository;
         this.moduloMapper = moduloMapper;
         this.permissaoMapper = permissaoMapper;
         this.permissaoRepository = permissaoRepository;
+        this.empresaModuloRepository = empresaModuloRepository;
     }
 
     @Transactional
@@ -63,16 +66,20 @@ public class ModuloService {
     }
 
     @Transactional
-    public void atribuirPermissaoAModulo(Long id, PermissaoCreateDTO dto){
+    public void atribuirPermissaoAModulo(Long id, PermissaoCreateDTO dto) {
+
         Modulo modulo = moduloRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Módulo Inexistente."));
+                .orElseThrow(() -> new IllegalArgumentException("Módulo inexistente."));
 
         Permissao permissao = permissaoMapper.toEntity(dto);
 
-        permissaoRepository.save(permissao);
+        permissao.setModulo(modulo);
 
         modulo.getPermissoes().add(permissao);
+
+        permissaoRepository.save(permissao);
     }
+
 
     @Transactional(readOnly = true)
     public List<ModuloResponseDTO> listar() {
@@ -100,5 +107,43 @@ public class ModuloService {
                 permissoes
         );
     }
-    
+
+    @Transactional(readOnly = true)
+    public Set<String> listarPermissoes(Long id) {
+        Modulo modulo = moduloRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Módulo inexistente."));
+
+        return modulo.getPermissoes()
+                .stream()
+                .map(Permissao::getChave)
+                .collect(Collectors.toSet());
+    }
+
+    @Transactional
+    public void removerPermissaoDoModulo(Long moduloId, Long permissaoId) {
+        Modulo modulo = moduloRepository.findById(moduloId)
+                .orElseThrow(() -> new IllegalArgumentException("Módulo inexistente."));
+
+        Permissao permissao = permissaoRepository.findById(permissaoId)
+                .orElseThrow(() -> new IllegalArgumentException("Permissão inexistente."));
+
+        if (!modulo.getPermissoes().remove(permissao)) {
+            throw new IllegalArgumentException("Permissão não pertence a este módulo.");
+        }
+    }
+
+    @Transactional
+    public void excluir(Long id) {
+
+        if (empresaModuloRepository.existsByModuloId(id)) {
+            throw new IllegalStateException(
+                    "Módulo vinculado a empresas. Não pode ser excluído."
+            );
+        }
+
+        moduloRepository.deleteById(id);
+    }
+
+
+
 }

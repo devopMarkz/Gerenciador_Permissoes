@@ -13,11 +13,14 @@ import static com.github.devopMarkz.gerenciador_permissoes.util.GeradorUri.gerar
 
 @RestController
 @RequestMapping("/admin/empresas")
-@RequiredArgsConstructor
 @PreAuthorize("hasRole('ROLE_ADMIN')")
 public class EmpresaAdminController {
 
     private final EmpresaService empresaService;
+
+    public EmpresaAdminController(EmpresaService empresaService) {
+        this.empresaService = empresaService;
+    }
 
     // 1️⃣ Criar empresa
     @PostMapping
