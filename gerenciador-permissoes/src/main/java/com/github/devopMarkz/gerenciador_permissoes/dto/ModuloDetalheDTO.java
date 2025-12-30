@@ -7,5 +7,5 @@ public record ModuloDetalheDTO(
         String nome,
         String descricao,
         String icone,
-        Set<String> permissoes
+        Set<PermissaoResponseDTO> permissoes
 ) {}

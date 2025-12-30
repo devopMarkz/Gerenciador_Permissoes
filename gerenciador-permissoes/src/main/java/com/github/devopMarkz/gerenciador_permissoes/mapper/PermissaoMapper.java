@@ -1,6 +1,7 @@
 package com.github.devopMarkz.gerenciador_permissoes.mapper;
 
 import com.github.devopMarkz.gerenciador_permissoes.dto.PermissaoCreateDTO;
+import com.github.devopMarkz.gerenciador_permissoes.dto.PermissaoResponseDTO;
 import com.github.devopMarkz.gerenciador_permissoes.model.Permissao;
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingConstants;
@@ -9,5 +10,8 @@ import org.mapstruct.MappingConstants;
 public abstract class PermissaoMapper {
 
     public abstract Permissao toEntity(PermissaoCreateDTO dto);
+
+    public abstract PermissaoResponseDTO toResponseDTO(Permissao permissao);
+
 
 }

@@ -1,9 +1,6 @@
 package com.github.devopMarkz.gerenciador_permissoes.service;
 
-import com.github.devopMarkz.gerenciador_permissoes.dto.ModuloCreateDTO;
-import com.github.devopMarkz.gerenciador_permissoes.dto.ModuloDetalheDTO;
-import com.github.devopMarkz.gerenciador_permissoes.dto.ModuloResponseDTO;
-import com.github.devopMarkz.gerenciador_permissoes.dto.PermissaoCreateDTO;
+import com.github.devopMarkz.gerenciador_permissoes.dto.*;
 import com.github.devopMarkz.gerenciador_permissoes.mapper.ModuloMapper;
 import com.github.devopMarkz.gerenciador_permissoes.mapper.PermissaoMapper;
 import com.github.devopMarkz.gerenciador_permissoes.model.Modulo;
@@ -90,13 +87,22 @@ public class ModuloService {
     }
 
     @Transactional(readOnly = true)
+    public List<ModuloDetalheDTO> listarModulosComPermissoes() {
+        List<Modulo> modulos = moduloRepository.buscarModulosComPermissoes();
+        return moduloRepository.findAll()
+                .stream()
+                .map(moduloMapper::toDetalheDTO)
+                .toList();
+    }
+
+    @Transactional(readOnly = true)
     public ModuloDetalheDTO buscarPorId(Long id) {
         Modulo modulo = moduloRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Módulo inexistente."));
 
-        Set<String> permissoes = modulo.getPermissoes()
+        Set<PermissaoResponseDTO> permissoes = modulo.getPermissoes()
                 .stream()
-                .map(Permissao::getChave)
+                .map(permissaoMapper::toResponseDTO)
                 .collect(Collectors.toSet());
 
         return new ModuloDetalheDTO(
@@ -109,13 +115,13 @@ public class ModuloService {
     }
 
     @Transactional(readOnly = true)
-    public Set<String> listarPermissoes(Long id) {
+    public Set<PermissaoResponseDTO> listarPermissoes(Long id) {
         Modulo modulo = moduloRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Módulo inexistente."));
 
         return modulo.getPermissoes()
                 .stream()
-                .map(Permissao::getChave)
+                .map(permissaoMapper::toResponseDTO)
                 .collect(Collectors.toSet());
     }
 

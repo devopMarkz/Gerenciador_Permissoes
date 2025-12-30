@@ -26,7 +26,7 @@ public class Modulo {
     @Column(nullable = false, unique = true)
     private String nome;
 
-    @Column(name = "icone")
+    @Column(name = "icone", columnDefinition = "TEXT")
     private String icone;
 
     @Column(name = "descricao")

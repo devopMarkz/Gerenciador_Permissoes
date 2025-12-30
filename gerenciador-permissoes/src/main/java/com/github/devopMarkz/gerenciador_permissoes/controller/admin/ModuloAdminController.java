@@ -1,9 +1,6 @@
 package com.github.devopMarkz.gerenciador_permissoes.controller.admin;
 
-import com.github.devopMarkz.gerenciador_permissoes.dto.ModuloCreateDTO;
-import com.github.devopMarkz.gerenciador_permissoes.dto.ModuloDetalheDTO;
-import com.github.devopMarkz.gerenciador_permissoes.dto.ModuloResponseDTO;
-import com.github.devopMarkz.gerenciador_permissoes.dto.PermissaoCreateDTO;
+import com.github.devopMarkz.gerenciador_permissoes.dto.*;
 import com.github.devopMarkz.gerenciador_permissoes.service.ModuloService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
@@ -33,8 +30,8 @@ public class ModuloAdminController {
     }
 
     @GetMapping
-    public ResponseEntity<List<ModuloResponseDTO>> listar() {
-        return ResponseEntity.ok(moduloService.listar());
+    public ResponseEntity<List<ModuloDetalheDTO>> listar() {
+        return ResponseEntity.ok(moduloService.listarModulosComPermissoes());
     }
 
     @GetMapping("/{id}")
@@ -61,7 +58,7 @@ public class ModuloAdminController {
     }
 
     @GetMapping("/{id}/permissoes")
-    public ResponseEntity<Set<String>> listarPermissoes(@PathVariable Long id) {
+    public ResponseEntity<Set<PermissaoResponseDTO>> listarPermissoes(@PathVariable Long id) {
         return ResponseEntity.ok(moduloService.listarPermissoes(id));
     }
 
