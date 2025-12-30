@@ -7,7 +7,6 @@ import com.github.devopMarkz.gerenciador_permissoes.dto.PermissaoCreateDTO;
 import com.github.devopMarkz.gerenciador_permissoes.service.ModuloService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -19,7 +18,6 @@ import static com.github.devopMarkz.gerenciador_permissoes.util.GeradorUri.gerar
 
 @RestController
 @RequestMapping("/admin/modulos")
-@PreAuthorize("hasRole('ADMIN')")
 public class ModuloAdminController {
 
     private final ModuloService moduloService;
@@ -28,26 +26,22 @@ public class ModuloAdminController {
         this.moduloService = moduloService;
     }
 
-    // CREATE
     @PostMapping
     public ResponseEntity<Void> criarModulo(@RequestBody @Valid ModuloCreateDTO dto) {
         Long id = moduloService.criarModulo(dto);
         return ResponseEntity.created(gerarURI(id)).build();
     }
 
-    // GET ALL
     @GetMapping
     public ResponseEntity<List<ModuloResponseDTO>> listar() {
         return ResponseEntity.ok(moduloService.listar());
     }
 
-    // GET BY ID
     @GetMapping("/{id}")
     public ResponseEntity<ModuloDetalheDTO> buscarPorId(@PathVariable Long id) {
         return ResponseEntity.ok(moduloService.buscarPorId(id));
     }
 
-    // UPLOAD ICON
     @PostMapping("/{id}/imagem")
     public ResponseEntity<Void> atribuirImagem(
             @PathVariable Long id,
@@ -57,7 +51,6 @@ public class ModuloAdminController {
         return ResponseEntity.noContent().build();
     }
 
-    // CREATE PERMISSAO
     @PostMapping("/{id}/permissoes")
     public ResponseEntity<Void> criarPermissao(
             @PathVariable Long id,
