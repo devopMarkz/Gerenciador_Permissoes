@@ -30,7 +30,7 @@ public class PerfilAdminController {
     }
 
     @GetMapping
-    public ResponseEntity<List<PerfilResponseDTO>> listar() {
+    public ResponseEntity<List<PerfilDetalheDTO>> listar() {
         return ResponseEntity.ok(perfilService.listar());
     }
 

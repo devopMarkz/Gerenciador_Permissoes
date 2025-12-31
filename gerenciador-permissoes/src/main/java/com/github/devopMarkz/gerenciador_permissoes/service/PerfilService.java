@@ -3,7 +3,9 @@ package com.github.devopMarkz.gerenciador_permissoes.service;
 import com.github.devopMarkz.gerenciador_permissoes.dto.PerfilCreateDTO;
 import com.github.devopMarkz.gerenciador_permissoes.dto.PerfilDetalheDTO;
 import com.github.devopMarkz.gerenciador_permissoes.dto.PerfilResponseDTO;
+import com.github.devopMarkz.gerenciador_permissoes.dto.PermissaoResponseDTO;
 import com.github.devopMarkz.gerenciador_permissoes.mapper.PerfilMapper;
+import com.github.devopMarkz.gerenciador_permissoes.mapper.PermissaoMapper;
 import com.github.devopMarkz.gerenciador_permissoes.model.Perfil;
 import com.github.devopMarkz.gerenciador_permissoes.model.PerfilPermissao;
 import com.github.devopMarkz.gerenciador_permissoes.model.Permissao;
@@ -24,12 +26,14 @@ public class PerfilService {
     private final PerfilMapper perfilMapper;
     private final PermissaoRepository permissaoRepository;
     private final PerfilPermissaoRepository perfilPermissaoRepository;
+    private final PermissaoMapper permissaoMapper;
 
-    public PerfilService(PerfilRepository perfilRepository, PerfilMapper perfilMapper, PermissaoRepository permissaoRepository, PerfilPermissaoRepository perfilPermissaoRepository) {
+    public PerfilService(PerfilRepository perfilRepository, PerfilMapper perfilMapper, PermissaoRepository permissaoRepository, PerfilPermissaoRepository perfilPermissaoRepository, PermissaoMapper permissaoMapper) {
         this.perfilRepository = perfilRepository;
         this.perfilMapper = perfilMapper;
         this.permissaoRepository = permissaoRepository;
         this.perfilPermissaoRepository = perfilPermissaoRepository;
+        this.permissaoMapper = permissaoMapper;
     }
 
     @Transactional
@@ -59,14 +63,17 @@ public class PerfilService {
     }
 
     @Transactional(readOnly = true)
-    public List<PerfilResponseDTO> listar() {
+    public List<PerfilDetalheDTO> listar() {
         return perfilRepository.findAll()
                 .stream()
-                .map(p -> new PerfilResponseDTO(
-                        p.getId(),
-                        p.getNome(),
-                        p.getDescricao()
-                ))
+                .map(p -> {
+                    Set<PermissaoResponseDTO> permissoes = p.getPermissoes()
+                            .stream()
+                            .map(pp -> permissaoMapper.toResponseDTO(pp.getPermissao()))
+                            .collect(Collectors.toSet());
+
+                    return new PerfilDetalheDTO(p.getId(), p.getNome(), p.getDescricao(), permissoes);
+                })
                 .toList();
     }
 
@@ -75,9 +82,9 @@ public class PerfilService {
         Perfil perfil = perfilRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Perfil inexistente."));
 
-        Set<String> permissoes = perfil.getPermissoes()
+        Set<PermissaoResponseDTO> permissoes = perfil.getPermissoes()
                 .stream()
-                .map(pp -> pp.getPermissao().getChave())
+                .map(pp -> permissaoMapper.toResponseDTO(pp.getPermissao()))
                 .collect(Collectors.toSet());
 
         return new PerfilDetalheDTO(

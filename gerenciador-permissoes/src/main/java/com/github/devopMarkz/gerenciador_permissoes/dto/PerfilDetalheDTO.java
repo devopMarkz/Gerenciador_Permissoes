@@ -6,5 +6,5 @@ public record PerfilDetalheDTO(
         Long id,
         String nome,
         String descricao,
-        Set<String> permissoes
+        Set<PermissaoResponseDTO> permissoes
 ) {}
