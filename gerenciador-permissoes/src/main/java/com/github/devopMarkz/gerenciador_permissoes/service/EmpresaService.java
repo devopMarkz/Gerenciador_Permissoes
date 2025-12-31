@@ -8,6 +8,7 @@ import com.github.devopMarkz.gerenciador_permissoes.repository.*;
 import com.github.devopMarkz.gerenciador_permissoes.util.BaseService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -45,7 +46,7 @@ public class EmpresaService extends BaseService {
 
     @Transactional(readOnly = true)
     public Page<EmpresaResponseDTO> empresaResponseDTOS(int pageNumber, int pageSize){
-        Pageable pageable = gerarPaginacao(pageNumber, pageSize, null);
+        Pageable pageable = gerarPaginacao(pageNumber, pageSize, Sort.unsorted());
         Page<Empresa> empresas = empresaRepository.findAll(pageable);
         return empresas.map(empresaMapper::toResponseDTO);
     }
@@ -60,7 +61,6 @@ public class EmpresaService extends BaseService {
         Empresa empresa = empresaRepository.findById(empresaId)
                 .orElseThrow(() -> new IllegalArgumentException("Empresa inexistente."));
 
-        // limpa estado anterior
         empresaModuloRepository.deleteAllByEmpresaId(empresaId);
         empresa.getModulos().clear();
 

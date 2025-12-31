@@ -5,6 +5,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.Set;
+
 @Getter
 @Setter
 @AllArgsConstructor
@@ -17,5 +19,8 @@ public class EmpresaResponseDTO {
     private String cnpj;
     private Boolean ativa;
     private String observacoes;
+    private Set<Long> perfisIds;
+    private Set<Long> permissoesIds;
+    private Set<Long> modulosIds;
 
 }

@@ -20,6 +20,6 @@ public interface EmpresaPermissaoRepository
 
     @Transactional
     @Modifying
-    @Query(value = "DELETE FROM tb_empresa_permissoes WHERE empresa_id = : empresaId", nativeQuery = true)
+    @Query(value = "DELETE FROM tb_empresa_permissoes WHERE empresa_id = :empresaId", nativeQuery = true)
     void deleteAllByEmpresaId(@Param("empresaId") Long empresaId);
 }

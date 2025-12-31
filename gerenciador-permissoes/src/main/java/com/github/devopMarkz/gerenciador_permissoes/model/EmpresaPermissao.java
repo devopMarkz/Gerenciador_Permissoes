@@ -32,6 +32,6 @@ public class EmpresaPermissao {
     private Boolean permitido;
 
     @CreationTimestamp
-    @Column(name = "criado_em", insertable = false, updatable = false)
+    @Column(name = "criado_em", updatable = false)
     private Instant criadoEm;
 }
