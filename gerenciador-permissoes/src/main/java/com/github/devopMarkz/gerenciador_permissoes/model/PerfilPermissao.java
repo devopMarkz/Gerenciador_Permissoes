@@ -13,7 +13,8 @@ import lombok.*;
 public class PerfilPermissao {
 
     @EmbeddedId
-    private PerfilPermissaoPK id = new PerfilPermissaoPK();
+    @EqualsAndHashCode.Include
+    private PerfilPermissaoPK id;
 
     @ManyToOne
     @MapsId("perfilId")
@@ -28,5 +29,9 @@ public class PerfilPermissao {
     public PerfilPermissao(Perfil perfil, Permissao permissao) {
         this.perfil = perfil;
         this.permissao = permissao;
+        this.id = new PerfilPermissaoPK(
+                perfil.getId(),
+                permissao.getId()
+        );
     }
 }

@@ -17,7 +17,7 @@ public class EmpresaPerfil {
 
     @EmbeddedId
     @EqualsAndHashCode.Include
-    private EmpresaPerfilPK id = new EmpresaPerfilPK();
+    private EmpresaPerfilPK id;
 
     @ManyToOne
     @MapsId("empresaId")
@@ -42,5 +42,9 @@ public class EmpresaPerfil {
     public EmpresaPerfil(Empresa empresa, Perfil perfil) {
         this.empresa = empresa;
         this.perfil = perfil;
+        this.id = new EmpresaPerfilPK(
+                empresa.getId(),
+                perfil.getId()
+        );
     }
 }

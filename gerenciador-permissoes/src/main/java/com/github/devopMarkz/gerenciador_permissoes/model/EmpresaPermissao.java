@@ -16,7 +16,8 @@ import java.time.Instant;
 public class EmpresaPermissao {
 
     @EmbeddedId
-    private EmpresaPermissaoPK id = new EmpresaPermissaoPK();
+    @EqualsAndHashCode.Include
+    private EmpresaPermissaoPK id;
 
     @ManyToOne
     @MapsId("empresaId")
@@ -29,9 +30,19 @@ public class EmpresaPermissao {
     private Permissao permissao;
 
     @Column(name = "permitido", nullable = false)
-    private Boolean permitido;
+    private Boolean permitido = Boolean.TRUE;
 
     @CreationTimestamp
     @Column(name = "criado_em", updatable = false)
     private Instant criadoEm;
+
+    public EmpresaPermissao(Empresa empresa, Permissao permissao, Boolean permitido) {
+        this.empresa = empresa;
+        this.permissao = permissao;
+        this.permitido = permitido;
+        this.id = new EmpresaPermissaoPK(
+                empresa.getId(),
+                permissao.getId()
+        );
+    }
 }

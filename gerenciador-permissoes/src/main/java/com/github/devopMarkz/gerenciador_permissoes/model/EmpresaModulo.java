@@ -16,16 +16,16 @@ public class EmpresaModulo implements Serializable {
 
     @EmbeddedId
     @EqualsAndHashCode.Include
-    private EmpresaModuloPK id = new EmpresaModuloPK();
+    private EmpresaModuloPK id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "empresa_id")
     @MapsId("empresaId")
+    @JoinColumn(name = "empresa_id")
     private Empresa empresa;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "modulo_id")
     @MapsId("moduloId")
+    @JoinColumn(name = "modulo_id")
     private Modulo modulo;
 
     @Column(columnDefinition = "boolean default true")
@@ -34,5 +34,9 @@ public class EmpresaModulo implements Serializable {
     public EmpresaModulo(Empresa empresa, Modulo modulo) {
         this.empresa = empresa;
         this.modulo = modulo;
+        this.id = new EmpresaModuloPK(
+                empresa.getId(),
+                modulo.getId()
+        );
     }
 }
