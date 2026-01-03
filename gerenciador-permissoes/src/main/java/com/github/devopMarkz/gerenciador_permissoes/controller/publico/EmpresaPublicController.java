@@ -44,9 +44,10 @@ public class EmpresaPublicController {
     @PostMapping("/{id}/permissoes")
     public ResponseEntity<Set<PermissaoResponseDTO>> listarPermissoes(
             @PathVariable Long id,
+            @RequestParam(name = "tipo", defaultValue = "acao") String tipo,
             @RequestBody PerfisRequestDTO request
     ) {
-        Set<PermissaoResponseDTO> permissoes = permissaoService.listarPermissoes(id, request.getPerfisIds());
+        Set<PermissaoResponseDTO> permissoes = permissaoService.listarPermissoes(id, tipo, request.getPerfisIds());
 
         return ResponseEntity.ok(permissoes);
     }

@@ -2,6 +2,7 @@ package com.github.devopMarkz.gerenciador_permissoes.service;
 
 import com.github.devopMarkz.gerenciador_permissoes.dto.PermissaoResponseDTO;
 import com.github.devopMarkz.gerenciador_permissoes.mapper.PermissaoMapper;
+import com.github.devopMarkz.gerenciador_permissoes.model.TipoPermissao;
 import com.github.devopMarkz.gerenciador_permissoes.model.Usuario;
 import com.github.devopMarkz.gerenciador_permissoes.repository.ModuloRepository;
 import com.github.devopMarkz.gerenciador_permissoes.repository.PerfilPermissaoRepository;
@@ -36,16 +37,23 @@ public class PermissaoService {
     @Transactional(readOnly = true)
     public Set<PermissaoResponseDTO> listarPermissoes(
             Long empresaId,
+            String tipo,
             Set<Long> perfisIds
     ) {
         Usuario usuario = authService.obterUsuarioLogado();
 
         if (usuario.getEmpresa() == null || !Objects.equals(usuario.getEmpresa().getId(), empresaId)) {
-            throw new IllegalStateException("Usuário não está associado a essa empresa.");
+            throw new IllegalArgumentException("Usuário não está associado a essa empresa.");
         }
 
+        if("acao".equals(tipo)) tipo = "ACAO";
+        else if("modulo".equals(tipo)) tipo = "MODULO";
+        else throw new IllegalArgumentException("Aceitamos apenas acao e modulo no parametro de url.");
+
+        TipoPermissao tipoPermissao = TipoPermissao.valueOf(tipo);
+
         return permissaoRepository
-                .buscarPermissoesPorPerfis(empresaId, perfisIds)
+                .buscarPermissoesPorPerfis(empresaId, tipoPermissao, perfisIds)
                 .stream()
                 .map(permissaoMapper::toResponseDTO)
                 .collect(Collectors.toSet());
