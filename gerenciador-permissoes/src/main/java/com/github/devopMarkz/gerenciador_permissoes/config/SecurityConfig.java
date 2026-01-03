@@ -35,7 +35,7 @@ public class SecurityConfig {
                     auth.requestMatchers("/auth/login").permitAll();
                     auth.requestMatchers("/auth/register").permitAll();
                     auth.requestMatchers("/admin/**").hasRole("ADMIN");
-                    auth.requestMatchers("/public/**").hasRole("EMPRESA");
+                    auth.requestMatchers("/public/**").hasAnyRole("EMPRESA", "ADMIN");
                     auth.anyRequest().authenticated();
                 })
                 .addFilterBefore(authenticationFilter, UsernamePasswordAuthenticationFilter.class)

@@ -6,9 +6,8 @@ import com.github.devopMarkz.gerenciador_permissoes.dto.PerfilResponseDTO;
 import com.github.devopMarkz.gerenciador_permissoes.dto.PermissaoResponseDTO;
 import com.github.devopMarkz.gerenciador_permissoes.mapper.PerfilMapper;
 import com.github.devopMarkz.gerenciador_permissoes.mapper.PermissaoMapper;
-import com.github.devopMarkz.gerenciador_permissoes.model.Perfil;
-import com.github.devopMarkz.gerenciador_permissoes.model.PerfilPermissao;
-import com.github.devopMarkz.gerenciador_permissoes.model.Permissao;
+import com.github.devopMarkz.gerenciador_permissoes.model.*;
+import com.github.devopMarkz.gerenciador_permissoes.repository.EmpresaPerfilRepository;
 import com.github.devopMarkz.gerenciador_permissoes.repository.PerfilPermissaoRepository;
 import com.github.devopMarkz.gerenciador_permissoes.repository.PerfilRepository;
 import com.github.devopMarkz.gerenciador_permissoes.repository.PermissaoRepository;
@@ -16,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -27,13 +27,17 @@ public class PerfilService {
     private final PermissaoRepository permissaoRepository;
     private final PerfilPermissaoRepository perfilPermissaoRepository;
     private final PermissaoMapper permissaoMapper;
+    private final EmpresaPerfilRepository empresaPerfilRepository;
+    private final AuthService authService;
 
-    public PerfilService(PerfilRepository perfilRepository, PerfilMapper perfilMapper, PermissaoRepository permissaoRepository, PerfilPermissaoRepository perfilPermissaoRepository, PermissaoMapper permissaoMapper) {
+    public PerfilService(PerfilRepository perfilRepository, PerfilMapper perfilMapper, PermissaoRepository permissaoRepository, PerfilPermissaoRepository perfilPermissaoRepository, PermissaoMapper permissaoMapper, EmpresaPerfilRepository empresaPerfilRepository, AuthService authService) {
         this.perfilRepository = perfilRepository;
         this.perfilMapper = perfilMapper;
         this.permissaoRepository = permissaoRepository;
         this.perfilPermissaoRepository = perfilPermissaoRepository;
         this.permissaoMapper = permissaoMapper;
+        this.empresaPerfilRepository = empresaPerfilRepository;
+        this.authService = authService;
     }
 
     @Transactional
@@ -95,5 +99,20 @@ public class PerfilService {
         );
     }
 
+    @Transactional(readOnly = true)
+    public List<PerfilResponseDTO> buscarPerfisPorEmpresa(Long idEmpresa){
+        Usuario usuarioLogado = authService.obterUsuarioLogado();
+
+        if(usuarioLogado.getEmpresa() != null && !Objects.equals(usuarioLogado.getEmpresa().getId(), idEmpresa)){
+            throw new IllegalArgumentException("Essa emppresa não pertence ao usuário logado.");
+        }
+
+        List<EmpresaPerfil> empresaPerfis = empresaPerfilRepository.buscarPorEmpresaId(idEmpresa);
+
+        return empresaPerfis
+                .stream()
+                .map(empresaPerfil -> perfilMapper.toRespondeDTO(empresaPerfil.getPerfil()))
+                .toList();
+    }
 
 }

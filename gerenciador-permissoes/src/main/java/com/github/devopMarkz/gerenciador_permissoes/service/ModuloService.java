@@ -3,8 +3,7 @@ package com.github.devopMarkz.gerenciador_permissoes.service;
 import com.github.devopMarkz.gerenciador_permissoes.dto.*;
 import com.github.devopMarkz.gerenciador_permissoes.mapper.ModuloMapper;
 import com.github.devopMarkz.gerenciador_permissoes.mapper.PermissaoMapper;
-import com.github.devopMarkz.gerenciador_permissoes.model.Modulo;
-import com.github.devopMarkz.gerenciador_permissoes.model.Permissao;
+import com.github.devopMarkz.gerenciador_permissoes.model.*;
 import com.github.devopMarkz.gerenciador_permissoes.repository.EmpresaModuloRepository;
 import com.github.devopMarkz.gerenciador_permissoes.repository.ModuloRepository;
 import com.github.devopMarkz.gerenciador_permissoes.repository.PermissaoRepository;
@@ -15,6 +14,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.util.Base64;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -26,13 +26,15 @@ public class ModuloService {
     private final PermissaoMapper permissaoMapper;
     private final PermissaoRepository permissaoRepository;
     private final EmpresaModuloRepository empresaModuloRepository;
+    private final AuthService authService;
 
-    public ModuloService(ModuloRepository moduloRepository, ModuloMapper moduloMapper, PermissaoMapper permissaoMapper, PermissaoRepository permissaoRepository, EmpresaModuloRepository empresaModuloRepository) {
+    public ModuloService(ModuloRepository moduloRepository, ModuloMapper moduloMapper, PermissaoMapper permissaoMapper, PermissaoRepository permissaoRepository, EmpresaModuloRepository empresaModuloRepository, AuthService authService) {
         this.moduloRepository = moduloRepository;
         this.moduloMapper = moduloMapper;
         this.permissaoMapper = permissaoMapper;
         this.permissaoRepository = permissaoRepository;
         this.empresaModuloRepository = empresaModuloRepository;
+        this.authService = authService;
     }
 
     @Transactional
@@ -150,6 +152,20 @@ public class ModuloService {
         moduloRepository.deleteById(id);
     }
 
+    @Transactional(readOnly = true)
+    public List<ModuloResponseDTO> buscarModulosPorEmpresa(Long idEmpresa){
+        Usuario usuarioLogado = authService.obterUsuarioLogado();
 
+        if(usuarioLogado.getEmpresa() != null && !Objects.equals(usuarioLogado.getEmpresa().getId(), idEmpresa)){
+            throw new IllegalArgumentException("Essa emppresa não pertence ao usuário logado.");
+        }
+
+        List<EmpresaModulo> empresaModulos = empresaModuloRepository.buscarPorEmpresaId(idEmpresa);
+
+        return empresaModulos
+                .stream()
+                .map(empresaModulo -> moduloMapper.toResponseDTO(empresaModulo.getModulo()))
+                .toList();
+    }
 
 }

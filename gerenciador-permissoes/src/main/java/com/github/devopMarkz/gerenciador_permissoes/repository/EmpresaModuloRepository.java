@@ -9,6 +9,8 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Repository
 public interface EmpresaModuloRepository extends JpaRepository<EmpresaModulo, EmpresaModuloPK> {
 
@@ -18,5 +20,8 @@ public interface EmpresaModuloRepository extends JpaRepository<EmpresaModulo, Em
     void deleteAllByEmpresaId(@Param("empresaId") Long empresaId);
 
     boolean existsByModuloId(Long moduloId);
+
+    @Query("SELECT obj FROM EmpresaModulo obj WHERE obj.empresa.id = :empresaId AND obj.ativo = true")
+    List<EmpresaModulo> buscarPorEmpresaId(@Param("empresaId") Long empresaId);
 
 }
