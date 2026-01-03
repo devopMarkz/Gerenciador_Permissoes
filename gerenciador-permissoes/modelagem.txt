@@ -34,12 +34,14 @@ CREATE TABLE tb_perfil (
 
 CREATE TABLE tb_permissao (
   id BIGSERIAL PRIMARY KEY,
-  chave TEXT NOT NULL UNIQUE,       -- ex: "FINANCEIRO_LISTAR_CONTAS"
+
+  chave TEXT NOT NULL UNIQUE,
   nome TEXT NOT NULL,
   descricao TEXT,
-  link TEXT,                        -- rota do front-end (opcional)
+  link TEXT,
 
-  -- cada permissão pertence a 1 módulo
+  tipo VARCHAR(20) NOT NULL,          -- MODULO | ACAO
+
   modulo_id BIGINT NOT NULL REFERENCES tb_modulo(id),
 
   criado_em TIMESTAMPTZ DEFAULT now(),

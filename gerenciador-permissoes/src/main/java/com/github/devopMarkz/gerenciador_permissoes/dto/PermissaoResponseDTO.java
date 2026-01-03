@@ -16,5 +16,6 @@ public class PermissaoResponseDTO {
     private String nome;
     private String descricao;
     private String link;
+    private String tipo;
 
 }

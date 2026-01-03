@@ -33,6 +33,10 @@ public class Permissao {
     @EqualsAndHashCode.Include
     private String link;
 
+    @Column(name = "tipo", nullable = false)
+    @Enumerated(EnumType.STRING)
+    private TipoPermissao tipo;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "modulo_id", nullable = false)
     private Modulo modulo;
